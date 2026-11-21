@@ -1,14 +1,21 @@
 # Vids Buka HP
 
-Aplikasi Android sederhana yang membantu membuka Google Vids dari HP melalui browser eksternal.
+Aplikasi Android sederhana yang membuka Google Vids di browser eksternal dan memberi petunjuk mencoba opsi **Situs desktop**.
 
-## Yang tersedia
+## Fitur dan batasan
 
-- Tombol untuk membuka tautan Google Vids yang diberikan pengguna di browser default.
-- Petunjuk mengaktifkan **Situs desktop** di Chrome dan memuat ulang halaman.
-- Peringatan bahwa APK ini tidak dapat mengubah dukungan atau pembatasan yang ditetapkan Google; Vids mungkin tetap meminta komputer atau tidak berfungsi penuh di HP.
+- Membuka tautan Google Vids yang diberikan pengguna di browser default.
+- Petunjuk berbahasa Indonesia untuk mengaktifkan **Situs desktop** di Chrome dan memuat ulang halaman.
+- Peringatan bahwa APK tidak dapat mengubah dukungan atau pembatasan Google; Vids mungkin tetap meminta komputer atau tidak berfungsi penuh di HP.
+- Login Google tetap dilakukan di browser biasa; aplikasi ini tidak menyematkan halaman login di WebView.
 
-Aplikasi ini bukan produk resmi atau afiliasi Google, dan tidak menanam halaman login Google di dalam WebView.
+Aplikasi ini bukan produk resmi atau afiliasi Google.
+
+## Build APK lewat GitHub Actions
+
+Setiap push yang mengubah aplikasi pada branch `main` memicu workflow **Build Android APK**. Workflow menghasilkan **APK debug** yang dapat dipasang untuk pengujian. Setelah workflow selesai, buka **Actions → Build Android APK → run terbaru → Artifacts → `vids-buka-hp-debug-apk`** untuk mengunduhnya. Artifact disimpan selama 14 hari.
+
+Build debug bukan APK rilis untuk Google Play. APK rilis memerlukan signing key/keystore dan konfigurasi signing yang aman.
 
 ## Menjalankan source
 
@@ -19,6 +26,4 @@ pnpm install
 pnpm dev
 ```
 
-## Build APK
-
-Source menggunakan starter Mobile Dev terkelola. Setelah perubahan source tersimpan sebagai checkpoint, gunakan aksi **Android build** pada Dashboard proyek untuk menghasilkan APK. APK belum tersedia di repository ini sampai proses build tersebut selesai.
+Source mobile tetap memakai repo Manus sebagai repo kanonis; GitHub ini merupakan salinan source dengan workflow build.

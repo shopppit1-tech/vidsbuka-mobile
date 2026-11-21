@@ -5,4 +5,4 @@
 - [x] **Menjelaskan batasan dukungan.** Aplikasi harus menyatakan dengan jelas bahwa mode desktop atau APK ini tidak dapat menghapus batasan perangkat/dukungan yang ditetapkan Google dan karena itu Google Vids mungkin tetap meminta komputer atau tidak berfungsi penuh di HP.
 - [x] **Menyiapkan salinan repositori GitHub privat.** Buat repo GitHub privat dan dorong source aplikasi sebagai salinan, tanpa mengganti remote Manus `origin` yang menjadi repo kanonis aplikasi mobile.
 - [x] **Menyiapkan source untuk build APK Android.** Pertahankan starter Expo/React Native yang sudah terpasang dan identifier aplikasi; verifikasi pemeriksaan TypeScript dan siapkan proyek agar APK dapat dibangun lewat aksi native build pada Dashboard.
-- [ ] **Membangun APK Android.** Gunakan aksi native Android build di Dashboard setelah checkpoint diterima; tandai selesai hanya setelah hasil build APK benar-benar tersedia.
+- [ ] **Membangun APK Android lewat GitHub Actions.** Workflow harus membangun APK debug yang bisa dipasang dan mengunggahnya sebagai artifact unduhan; tandai selesai hanya setelah workflow berhasil dan artifact benar-benar tersedia.

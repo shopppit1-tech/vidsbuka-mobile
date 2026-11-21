@@ -1,21 +1,21 @@
 # Vids Buka HP
 
-Aplikasi Android sederhana yang membuka Google Vids di browser eksternal dan memberi petunjuk mencoba opsi **Situs desktop**.
+APK pendamping yang mencoba membuka Google Vids di dalam WebView Android dengan user-agent desktop.
 
-## Fitur dan batasan
+## Fitur
 
-- Membuka tautan Google Vids yang diberikan pengguna di browser default.
-- Petunjuk berbahasa Indonesia untuk mengaktifkan **Situs desktop** di Chrome dan memuat ulang halaman.
-- Peringatan bahwa APK tidak dapat mengubah dukungan atau pembatasan Google; Vids mungkin tetap meminta komputer atau tidak berfungsi penuh di HP.
-- Login Google tetap dilakukan di browser biasa; aplikasi ini tidak menyematkan halaman login di WebView.
+- Halaman Vids ditampilkan di dalam aplikasi native Android.
+- Tombol untuk membuka halaman login Google, kembali ke Vids/muat ulang, dan mencoba keluar dari sesi Google di WebView.
+- Tombol fallback ke browser HP biasa bila login di WebView ditolak.
+- Aplikasi tidak meminta atau menyimpan sandi, dan tidak memeriksa atau mengklaim status akun secara otomatis.
 
-Aplikasi ini bukan produk resmi atau afiliasi Google.
+Google dapat membatasi login di browser tertanam, dan mode desktop tidak menjamin semua fitur Vids berjalan penuh di HP. Aplikasi ini bukan produk resmi atau afiliasi Google.
 
 ## Build APK lewat GitHub Actions
 
-Setiap push yang mengubah aplikasi pada branch `main` memicu workflow **Build Android APK**. Workflow menghasilkan **APK debug** yang dapat dipasang untuk pengujian. Setelah workflow selesai, buka **Actions → Build Android APK → run terbaru → Artifacts → `vids-buka-hp-debug-apk`** untuk mengunduhnya. Artifact disimpan selama 14 hari.
+Push yang mengubah aplikasi pada branch `main` memicu workflow **Build Android APK**. Workflow menghasilkan APK debug untuk pengujian. Setelah workflow berhasil, buka **Actions → Build Android APK → run terbaru → Artifacts → `vids-buka-hp-debug-apk`**. Artifact disimpan selama 14 hari.
 
-Build debug bukan APK rilis untuk Google Play. APK rilis memerlukan signing key/keystore dan konfigurasi signing yang aman.
+APK debug bukan APK rilis Play Store. Build rilis memerlukan signing key/keystore dan konfigurasi signing yang aman.
 
 ## Menjalankan source
 
@@ -26,4 +26,4 @@ pnpm install
 pnpm dev
 ```
 
-Source mobile tetap memakai repo Manus sebagai repo kanonis; GitHub ini merupakan salinan source dengan workflow build.
+Source mobile tetap memakai repo Manus sebagai repo kanonis; GitHub ini adalah salinan source dengan workflow build.

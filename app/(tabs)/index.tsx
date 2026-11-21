@@ -1,123 +1,218 @@
-import { useState } from "react";
-import { Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useRef, useState } from "react";
+import {
+  Alert,
+  Linking,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 import { ScreenContainer } from "@/components/screen-container";
+import VidsBrowser from "@/components/vids-browser";
+import type { VidsBrowserHandle } from "@/components/vids-browser.types";
 
 const GOOGLE_VIDS_URL = "https://docs.google.com/videos/u/0/mobilecreate?pli=1";
 
-const steps = [
-  { number: "01", title: "Buka menu browser", detail: "Di Chrome, ketuk ikon ⋮ di pojok kanan atas." },
-  { number: "02", title: "Pilih Situs desktop", detail: "Aktifkan “Situs desktop” dari daftar menu." },
-  { number: "03", title: "Muat ulang halaman", detail: "Jika belum berubah, refresh halaman Google Vids." },
-];
+function ActionButton({
+  label,
+  icon,
+  onPress,
+  variant = "default",
+}: {
+  label: string;
+  icon: string;
+  onPress: () => void;
+  variant?: "default" | "accent" | "danger";
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.actionButton,
+        variant === "accent" && styles.actionButtonAccent,
+        variant === "danger" && styles.actionButtonDanger,
+        pressed && styles.actionButtonPressed,
+      ]}
+    >
+      <Text style={styles.actionIcon}>{icon}</Text>
+      <Text
+        style={[
+          styles.actionLabel,
+          variant === "accent" && styles.actionLabelAccent,
+        ]}
+      >
+        {label}
+      </Text>
+    </Pressable>
+  );
+}
 
 export default function HomeScreen() {
-  const [isOpening, setIsOpening] = useState(false);
+  const browserRef = useRef<VidsBrowserHandle>(null);
+  const [browserVisible, setBrowserVisible] = useState(true);
+  const [browserStatus, setBrowserStatus] = useState(
+    "Siap membuka Google Vids di dalam aplikasi",
+  );
 
-  const openGoogleVids = async () => {
-    if (isOpening) return;
-    setIsOpening(true);
+  const openExternalBrowser = async () => {
     try {
       await Linking.openURL(GOOGLE_VIDS_URL);
     } catch {
-      Alert.alert(
-        "Browser tidak dapat dibuka",
-        "Pastikan ada browser seperti Chrome yang terpasang, lalu coba lagi.",
+      setBrowserStatus(
+        "Browser tidak dapat dibuka. Pastikan browser HP terpasang, lalu coba lagi.",
       );
-    } finally {
-      setIsOpening(false);
     }
+  };
+
+  const openLogin = () => {
+    browserRef.current?.login();
+    setBrowserStatus("Membuka halaman login Google di WebView");
+  };
+
+  const checkVids = () => {
+    browserRef.current?.openVids();
+    setBrowserStatus(
+      "Memuat ulang Google Vids. Status akun tetap ditentukan oleh halaman Google.",
+    );
+  };
+
+  const performLogout = () => {
+    browserRef.current?.logout();
+  };
+
+  const logOut = () => {
+    const title = "Keluar dari sesi WebView?";
+    const message =
+      "Ini mencoba mengakhiri sesi Google di dalam WebView aplikasi ini. Sesi Google di Chrome dapat tetap terpisah.";
+    if (Platform.OS === "web") {
+      if (
+        typeof window !== "undefined" &&
+        window.confirm(`${title}\n\n${message}`)
+      ) {
+        performLogout();
+      }
+      return;
+    }
+    Alert.alert(title, message, [
+      { text: "Batal", style: "cancel" },
+      { text: "Keluar", style: "destructive", onPress: performLogout },
+    ]);
   };
 
   return (
     <ScreenContainer
-      containerClassName="bg-[#F4F1E8]"
-      safeAreaClassName="bg-[#F4F1E8]"
+      containerClassName="bg-[#06131E]"
+      safeAreaClassName="bg-[#06131E]"
     >
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.brandRow}>
-          <View style={styles.brandMark}>
-            <Text style={styles.brandPlay}>▶</Text>
+        <View style={styles.header}>
+          <View style={styles.brandGroup}>
+            <View style={styles.brandMark}>
+              <Text style={styles.brandPlay}>▶</Text>
+            </View>
+            <View>
+              <Text style={styles.brandName}>Vids Buka HP</Text>
+              <Text style={styles.brandCaption}>AKSES GOOGLE VIDS</Text>
+            </View>
           </View>
-          <View>
-            <Text style={styles.brandName}>Vids Buka HP</Text>
-            <Text style={styles.brandCaption}>PANDUAN AKSES</Text>
+          <View style={styles.freeBadge}>
+            <Text style={styles.freeBadgeText}>WEBVIEW</Text>
           </View>
         </View>
 
-        <View style={styles.intro}>
-          <Text style={styles.eyebrow}>GOOGLE VIDS · COBA DARI HP</Text>
-          <Text style={styles.heading}>Coba buka{ "\n" }Vids di HP.</Text>
-          <Text style={styles.introCopy}>
-            Buka di browser, lalu coba tampilan desktop. Semoga cocok untuk perangkat Anda.
+        <View style={styles.sessionBar}>
+          <View style={styles.sessionDot} />
+          <Text style={styles.sessionText}>
+            Sesi browser dalam aplikasi siap
           </Text>
         </View>
 
-        <View style={styles.launchCard}>
-          <View style={styles.launchCardTop}>
-            <View style={styles.liveDot} />
-            <Text style={styles.launchOverline}>TAUTAN RESMI GOOGLE</Text>
+        <View style={styles.panel}>
+          <View style={styles.panelHeader}>
+            <View>
+              <Text style={styles.panelTitle}>Akun Google</Text>
+              <Text style={styles.panelSubTitle}>
+                Login di WebView → sesi dan akun dikelola Google
+              </Text>
+            </View>
           </View>
-          <Text style={styles.launchTitle}>Mulai dari browser</Text>
-          <Text style={styles.launchCopy}>
-            Halaman dibuka di browser default agar login Google tetap memakai browser biasa. Google mungkin tetap meminta komputer.
+          <View style={styles.actionRow}>
+            <ActionButton
+              label="Login"
+              icon="↪"
+              variant="accent"
+              onPress={openLogin}
+            />
+            <ActionButton label="Cek" icon="⟳" onPress={checkVids} />
+            <ActionButton
+              label="Keluar"
+              icon="↗"
+              variant="danger"
+              onPress={logOut}
+            />
+          </View>
+          <View style={styles.statusLine}>
+            <Text style={styles.statusLabel}>STATUS</Text>
+            <Text style={styles.statusValue}>{browserStatus}</Text>
+          </View>
+        </View>
+
+        <View style={styles.webViewHeader}>
+          <Text style={styles.webViewTitle}>Tampilkan WebView</Text>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => setBrowserVisible((value) => !value)}
+            style={styles.visibilityButton}
+          >
+            <Text style={styles.visibilityIcon}>
+              {browserVisible ? "◉" : "◎"}
+            </Text>
+            <Text style={styles.visibilityText}>
+              {browserVisible ? "Sembunyikan" : "Tampilkan"}
+            </Text>
+          </Pressable>
+        </View>
+
+        <View
+          style={[
+            styles.browserFrame,
+            !browserVisible && styles.browserFrameHidden,
+          ]}
+        >
+          <VidsBrowser ref={browserRef} onStatusChange={setBrowserStatus} />
+        </View>
+
+        <View style={styles.noteCard}>
+          <Text style={styles.noteTitle}>Jika Google menolak login</Text>
+          <Text style={styles.noteText}>
+            APK ini mencoba membuka Vids dengan tampilan desktop di WebView.
+            Google dapat membatasi login di browser tertanam. Jika muncul pesan
+            “browser tidak aman”, coba tombol di bawah untuk membuka browser HP
+            biasa.
           </Text>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Buka Google Vids di browser"
-            onPress={openGoogleVids}
-            disabled={isOpening}
+            onPress={openExternalBrowser}
             style={({ pressed }) => [
-              styles.launchButton,
-              pressed && styles.launchButtonPressed,
-              isOpening && styles.launchButtonDisabled,
+              styles.externalButton,
+              pressed && styles.actionButtonPressed,
             ]}
           >
-            <Text style={styles.launchButtonText}>
-              {isOpening ? "Membuka browser…" : "Buka Google Vids"}
-            </Text>
-            <Text style={styles.launchArrow}>↗</Text>
+            <Text style={styles.externalButtonText}>Buka di browser HP ↗</Text>
           </Pressable>
-          <Text style={styles.launchFootnote}>Akan berpindah ke aplikasi browser Anda</Text>
         </View>
 
-        <View style={styles.sectionHeadingRow}>
-          <Text style={styles.sectionHeading}>Coba tampilan desktop</Text>
-          <Text style={styles.sectionHint}>DI CHROME</Text>
-        </View>
-        <View style={styles.stepsCard}>
-          {steps.map((step, index) => (
-            <View
-              key={step.number}
-              style={[styles.stepRow, index < steps.length - 1 && styles.stepDivider]}
-            >
-              <View style={styles.stepNumberBox}>
-                <Text style={styles.stepNumber}>{step.number}</Text>
-              </View>
-              <View style={styles.stepTextGroup}>
-                <Text style={styles.stepTitle}>{step.title}</Text>
-                <Text style={styles.stepDetail}>{step.detail}</Text>
-              </View>
-            </View>
-          ))}
-        </View>
-
-        <View style={styles.notice}>
-          <View style={styles.noticeIcon}>
-            <Text style={styles.noticeIconText}>!</Text>
-          </View>
-          <View style={styles.noticeTextGroup}>
-            <Text style={styles.noticeTitle}>Perlu diketahui</Text>
-            <Text style={styles.noticeCopy}>
-              APK ini hanya membuka tautan dan memberi petunjuk. Tampilan desktop tidak dapat melewati batasan Google; Vids mungkin tetap meminta komputer atau tidak berfungsi penuh di HP.
-            </Text>
-          </View>
-        </View>
-
-        <Text style={styles.footer}>Aplikasi ini tidak berafiliasi dengan Google.</Text>
+        <Text style={styles.footer}>
+          Aplikasi ini bukan produk resmi Google. Aplikasi tidak menyimpan sandi
+          atau memeriksa status akun secara otomatis.
+        </Text>
       </ScrollView>
     </ScreenContainer>
   );
@@ -125,243 +220,178 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   content: {
-    paddingHorizontal: 22,
-    paddingTop: 14,
-    paddingBottom: 32,
-    gap: 22,
+    paddingHorizontal: 17,
+    paddingTop: 12,
+    paddingBottom: 28,
+    gap: 15,
   },
-  brandRow: {
+  header: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 11,
+    justifyContent: "space-between",
   },
+  brandGroup: { flexDirection: "row", alignItems: "center", gap: 11 },
   brandMark: {
-    width: 42,
-    height: 42,
+    width: 43,
+    height: 43,
     borderRadius: 14,
+    backgroundColor: "#102B3B",
+    borderWidth: 1,
+    borderColor: "#20475A",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#18324B",
   },
-  brandPlay: {
-    color: "#FF806F",
-    fontSize: 16,
-    marginLeft: 2,
-  },
+  brandPlay: { color: "#1CE0B0", fontSize: 15, marginLeft: 2 },
   brandName: {
-    color: "#18324B",
-    fontSize: 15,
+    color: "#F2F7F9",
+    fontSize: 16,
     fontWeight: "800",
     letterSpacing: -0.2,
   },
   brandCaption: {
-    marginTop: 2,
-    color: "#77818A",
+    color: "#7D99A9",
     fontSize: 9,
     fontWeight: "800",
-    letterSpacing: 1.35,
+    letterSpacing: 1.3,
+    marginTop: 2,
   },
-  intro: {
-    gap: 8,
-    paddingTop: 7,
+  freeBadge: {
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: "#117F73",
+    backgroundColor: "#0B302F",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
   },
-  eyebrow: {
-    color: "#D45E51",
-    fontSize: 10,
-    fontWeight: "800",
-    letterSpacing: 1.6,
-  },
-  heading: {
-    color: "#18324B",
-    fontSize: 37,
-    lineHeight: 42,
+  freeBadgeText: {
+    color: "#39D4B0",
+    fontSize: 9,
     fontWeight: "900",
-    letterSpacing: -1.4,
+    letterSpacing: 1.1,
   },
-  introCopy: {
-    maxWidth: 340,
-    color: "#5F6C76",
-    fontSize: 14,
-    lineHeight: 21,
-  },
-  launchCard: {
-    borderRadius: 24,
-    backgroundColor: "#18324B",
-    padding: 20,
-    shadowColor: "#18324B",
-    shadowOpacity: 0.13,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 3,
-  },
-  launchCardTop: {
+  sessionBar: {
+    minHeight: 42,
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 10,
+    paddingHorizontal: 12,
+    borderRadius: 13,
+    backgroundColor: "#0B211F",
+    borderWidth: 1,
+    borderColor: "#153C37",
   },
-  liveDot: {
-    width: 7,
-    height: 7,
-    borderRadius: 4,
-    backgroundColor: "#FF806F",
+  sessionDot: {
+    width: 9,
+    height: 9,
+    borderRadius: 5,
+    backgroundColor: "#24D6AA",
   },
-  launchOverline: {
-    color: "#B8C7D2",
-    fontSize: 9,
-    fontWeight: "800",
-    letterSpacing: 1.4,
+  sessionText: { color: "#49D9B5", fontSize: 13, fontWeight: "700" },
+  panel: {
+    borderRadius: 21,
+    padding: 16,
+    backgroundColor: "#0B1C29",
+    borderWidth: 1,
+    borderColor: "#203847",
   },
-  launchTitle: {
-    marginTop: 12,
-    color: "#FFFFFF",
-    fontSize: 21,
+  panelHeader: { flexDirection: "row", justifyContent: "space-between" },
+  panelTitle: {
+    color: "#F2F7F9",
+    fontSize: 20,
     fontWeight: "800",
     letterSpacing: -0.4,
   },
-  launchCopy: {
-    marginTop: 5,
-    color: "#D2DBE2",
+  panelSubTitle: {
+    color: "#8FA3AF",
     fontSize: 12,
-    lineHeight: 18,
+    lineHeight: 17,
+    marginTop: 4,
   },
-  launchButton: {
-    minHeight: 52,
-    flexDirection: "row",
+  actionRow: { flexDirection: "row", gap: 8, marginTop: 15 },
+  actionButton: {
+    flex: 1,
+    minHeight: 49,
+    borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
-    gap: 12,
-    marginTop: 17,
-    borderRadius: 15,
-    backgroundColor: "#FF806F",
-  },
-  launchButtonPressed: {
-    opacity: 0.82,
-    transform: [{ scale: 0.99 }],
-  },
-  launchButtonDisabled: {
-    opacity: 0.65,
-  },
-  launchButtonText: {
-    color: "#18324B",
-    fontSize: 15,
-    fontWeight: "800",
-  },
-  launchArrow: {
-    color: "#18324B",
-    fontSize: 20,
-    fontWeight: "700",
-    marginTop: -3,
-  },
-  launchFootnote: {
-    marginTop: 9,
-    color: "#B8C7D2",
-    textAlign: "center",
-    fontSize: 10,
-  },
-  sectionHeadingRow: {
     flexDirection: "row",
-    alignItems: "baseline",
-    justifyContent: "space-between",
-    marginBottom: -13,
+    gap: 7,
+    borderWidth: 1,
+    borderColor: "#2A4555",
+    backgroundColor: "#0E2230",
   },
-  sectionHeading: {
-    color: "#18324B",
-    fontSize: 17,
-    fontWeight: "800",
-    letterSpacing: -0.25,
+  actionButtonAccent: { backgroundColor: "#103949", borderColor: "#155267" },
+  actionButtonDanger: { borderColor: "#6E3B4C", backgroundColor: "#2A202A" },
+  actionButtonPressed: { opacity: 0.7 },
+  actionIcon: { color: "#A8BCC6", fontSize: 17, fontWeight: "700" },
+  actionLabel: { color: "#C5D2D8", fontSize: 12, fontWeight: "800" },
+  actionLabelAccent: { color: "#43D5B3" },
+  statusLine: {
+    borderTopWidth: 1,
+    borderTopColor: "#203847",
+    marginTop: 14,
+    paddingTop: 11,
+    gap: 4,
   },
-  sectionHint: {
-    color: "#89929A",
+  statusLabel: {
+    color: "#638092",
     fontSize: 9,
-    fontWeight: "800",
-    letterSpacing: 1.25,
+    fontWeight: "900",
+    letterSpacing: 1.4,
   },
-  stepsCard: {
+  statusValue: { color: "#AFC1CA", fontSize: 11, lineHeight: 16 },
+  webViewHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 2,
+  },
+  webViewTitle: { color: "#D8E3E8", fontSize: 14, fontWeight: "800" },
+  visibilityButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 7,
+    paddingVertical: 5,
+    paddingLeft: 10,
+  },
+  visibilityIcon: { color: "#28D7B0", fontSize: 15 },
+  visibilityText: { color: "#28D7B0", fontSize: 12, fontWeight: "800" },
+  browserFrame: {
+    height: 470,
     borderRadius: 20,
+    overflow: "hidden",
     backgroundColor: "#FFFFFF",
-    paddingHorizontal: 15,
     borderWidth: 1,
-    borderColor: "#E8E3D7",
+    borderColor: "#274352",
   },
-  stepRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 13,
-    paddingVertical: 14,
-  },
-  stepDivider: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: "#E8E3D7",
-  },
-  stepNumberBox: {
-    width: 34,
-    height: 34,
-    borderRadius: 12,
-    backgroundColor: "#F4F1E8",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  stepNumber: {
-    color: "#D45E51",
-    fontSize: 11,
-    fontWeight: "900",
-    letterSpacing: 0.3,
-  },
-  stepTextGroup: {
-    flex: 1,
-    gap: 2,
-  },
-  stepTitle: {
-    color: "#18324B",
-    fontSize: 13,
-    fontWeight: "800",
-  },
-  stepDetail: {
-    color: "#68757F",
-    fontSize: 11,
-    lineHeight: 16,
-  },
-  notice: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 12,
-    padding: 15,
+  browserFrameHidden: { height: 1, opacity: 0 },
+  noteCard: {
     borderRadius: 18,
-    backgroundColor: "#FFF3E5",
+    padding: 15,
+    backgroundColor: "#102330",
     borderWidth: 1,
-    borderColor: "#F2D8B6",
+    borderColor: "#294656",
+    gap: 8,
   },
-  noticeIcon: {
-    width: 23,
-    height: 23,
-    borderRadius: 8,
-    alignItems: "center",
+  noteTitle: { color: "#E5EFF2", fontSize: 13, fontWeight: "800" },
+  noteText: { color: "#A4B7C0", fontSize: 11, lineHeight: 17 },
+  externalButton: {
+    alignSelf: "flex-start",
+    minHeight: 38,
     justifyContent: "center",
-    backgroundColor: "#F6D4A6",
+    paddingHorizontal: 13,
+    borderRadius: 12,
+    backgroundColor: "#0F3740",
+    borderWidth: 1,
+    borderColor: "#1B6770",
+    marginTop: 2,
   },
-  noticeIconText: {
-    color: "#80511C",
-    fontSize: 14,
-    fontWeight: "900",
-  },
-  noticeTextGroup: {
-    flex: 1,
-    gap: 3,
-  },
-  noticeTitle: {
-    color: "#62431F",
-    fontSize: 12,
-    fontWeight: "900",
-  },
-  noticeCopy: {
-    color: "#705A3D",
-    fontSize: 11,
-    lineHeight: 16,
-  },
+  externalButtonText: { color: "#61E1CB", fontSize: 11, fontWeight: "800" },
   footer: {
-    color: "#8A928F",
-    textAlign: "center",
+    color: "#718692",
     fontSize: 10,
-    marginTop: -8,
+    lineHeight: 15,
+    textAlign: "center",
+    paddingHorizontal: 8,
   },
 });

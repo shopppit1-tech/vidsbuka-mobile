@@ -9,6 +9,8 @@ import {
   Text,
   View,
 } from "react-native";
+import * as IntentLauncher from "expo-intent-launcher";
+import * as WebBrowser from "expo-web-browser";
 
 import { ScreenContainer } from "@/components/screen-container";
 import VidsBrowser from "@/components/vids-browser";
@@ -59,18 +61,35 @@ export default function HomeScreen() {
   );
 
   const openExternalBrowser = async () => {
+    setBrowserStatus(
+      "Membuka Google Vids di Chrome. Pilih Situs desktop dari menu Chrome jika diperlukan.",
+    );
+    if (Platform.OS === "android") {
+      try {
+        await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
+          data: GOOGLE_VIDS_URL,
+          packageName: "com.android.chrome",
+        });
+        return;
+      } catch {
+        // Chrome is not installed or unavailable; use the system browser below.
+      }
+    }
     try {
-      await Linking.openURL(GOOGLE_VIDS_URL);
+      await WebBrowser.openBrowserAsync(GOOGLE_VIDS_URL, { showTitle: true });
     } catch {
-      setBrowserStatus(
-        "Browser tidak dapat dibuka. Pastikan browser HP terpasang, lalu coba lagi.",
-      );
+      try {
+        await Linking.openURL(GOOGLE_VIDS_URL);
+      } catch {
+        setBrowserStatus(
+          "Browser tidak dapat dibuka. Pastikan Chrome atau browser lain terpasang, lalu coba lagi.",
+        );
+      }
     }
   };
 
   const openLogin = () => {
-    browserRef.current?.login();
-    setBrowserStatus("Membuka halaman login Google di WebView");
+    void openExternalBrowser();
   };
 
   const checkVids = () => {
@@ -145,7 +164,7 @@ export default function HomeScreen() {
           </View>
           <View style={styles.actionRow}>
             <ActionButton
-              label="Login"
+              label="Login Chrome"
               icon="↪"
               variant="accent"
               onPress={openLogin}
@@ -190,12 +209,12 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.noteCard}>
-          <Text style={styles.noteTitle}>Jika Google menolak login</Text>
+          <Text style={styles.noteTitle}>Buka melalui Chrome</Text>
           <Text style={styles.noteText}>
-            APK ini mencoba membuka Vids dengan tampilan desktop di WebView.
-            Google dapat membatasi login di browser tertanam. Jika muncul pesan
-            “browser tidak aman”, coba tombol di bawah untuk membuka browser HP
-            biasa.
+            Login Google di WebView tertanam dapat diblokir. Tombol ini membuka
+            Google Vids di tab browser; dari menu ⋮ browser, aktifkan Situs
+            desktop jika tampilan PC diperlukan. Google tetap menentukan akses
+            akun dan fitur yang tersedia.
           </Text>
           <Pressable
             accessibilityRole="button"
@@ -205,7 +224,7 @@ export default function HomeScreen() {
               pressed && styles.actionButtonPressed,
             ]}
           >
-            <Text style={styles.externalButtonText}>Buka di browser HP ↗</Text>
+            <Text style={styles.externalButtonText}>Buka Google Vids di Chrome ↗</Text>
           </Pressable>
         </View>
 

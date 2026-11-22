@@ -1,21 +1,30 @@
 # Vids Buka HP
 
-APK pendamping yang mencoba membuka Google Vids di dalam WebView Android dengan user-agent desktop.
+APK Android pendamping untuk membuka Google Vids di browser Chrome atau browser default, dengan pilihan Situs desktop untuk tampilan PC.
 
-## Fitur
+## Cara menggunakan
 
-- Halaman Vids ditampilkan di dalam aplikasi native Android.
-- Tombol untuk membuka halaman login Google, kembali ke Vids/muat ulang, dan mencoba keluar dari sesi Google di WebView.
-- Tombol fallback ke browser HP biasa bila login di WebView ditolak.
-- Aplikasi tidak meminta atau menyimpan sandi, dan tidak memeriksa atau mengklaim status akun secara otomatis.
+1. Pasang APK dari halaman **Releases** di GitHub.
+2. Tekan **Login Chrome** atau **Buka Google Vids di Chrome**.
+3. Di browser yang terbuka, tekan menu **⋮** lalu aktifkan **Situs desktop** bila ingin tampilan seperti PC.
 
-Google dapat membatasi login di browser tertanam, dan mode desktop tidak menjamin semua fitur Vids berjalan penuh di HP. Aplikasi ini bukan produk resmi atau afiliasi Google.
+Login akun Google dilakukan di browser asli, bukan di WebView tertanam, karena Google dapat membatasi login di browser tertanam. Google tetap menentukan akses akun dan fitur yang tersedia.
+
+Jika Android menolak pembaruan APK debug karena tanda tangan berbeda, hapus versi debug lama terlebih dahulu lalu pasang APK baru.
+
+## Batasan
+
+Aplikasi ini bukan produk resmi atau afiliasi Google. Situs desktop tidak menjamin seluruh fitur Google Vids berjalan di HP.
+
+## Mengunduh APK
+
+Unduh APK langsung dari [GitHub Releases](https://github.com/shopppit1-tech/vidsbuka-mobile/releases). Build dari tab GitHub Actions tersedia sebagai artifact ZIP dan perlu diekstrak sebelum memasang file APK.
 
 ## Build APK lewat GitHub Actions
 
 Push yang mengubah aplikasi pada branch `main` memicu workflow **Build Android APK**. Workflow menghasilkan APK debug untuk pengujian. Setelah workflow berhasil, buka **Actions → Build Android APK → run terbaru → Artifacts → `vids-buka-hp-debug-apk`**. Artifact disimpan selama 14 hari.
 
-APK debug bukan APK rilis Play Store. Build rilis memerlukan signing key/keystore dan konfigurasi signing yang aman.
+APK debug bukan APK rilis Play Store. Build rilis bertanda tangan permanen memerlukan signing key/keystore yang aman.
 
 ## Menjalankan source
 

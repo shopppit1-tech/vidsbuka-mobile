@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   build-apk:
-    name: Build installable debug APK
+    name: Build standalone installable APK
     runs-on: ubuntu-24.04
     timeout-minutes: 45
 
@@ -80,14 +80,23 @@ jobs:
         env:
           CI: "1"
 
-      - name: Build debug APK
-        run: ./gradlew assembleDebug --no-daemon
+      - name: Build standalone release APK
+        run: ./gradlew assembleRelease --no-daemon
         working-directory: android
+
+      - name: Verify APK is self-contained and ARM64-only
+        run: |
+          APK=android/app/build/outputs/apk/release/app-release.apk
+          test -f "$APK"
+          unzip -tq "$APK"
+          unzip -Z1 "$APK" | grep -Fxq 'assets/index.android.bundle'
+          ABIS=$(unzip -Z1 "$APK" | awk -F/ '$1=="lib" && NF>=3 {print $2}' | sort -u)
+          test "$ABIS" = "arm64-v8a"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vids-buka-hp-debug-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: vids-buka-hp-arm64-standalone-apk
+          path: android/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 14

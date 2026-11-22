@@ -12,15 +12,15 @@ Login akun Google dilakukan langsung di Chrome. Google tetap menentukan akses ak
 
 ## Kompatibilitas
 
-APK rilis dioptimalkan untuk Android **ARM64 (64-bit)** agar ukuran unduhan lebih kecil. APK ini tidak cocok untuk perangkat Android 32-bit saja. Jika Android menolak pembaruan APK debug karena tanda tangan berbeda, hapus versi debug lama terlebih dahulu lalu pasang APK baru.
+APK rilis dioptimalkan untuk Android **ARM64 (64-bit)** agar ukuran unduhan lebih kecil. APK ini tidak cocok untuk perangkat Android 32-bit saja. Untuk berpindah dari v1.0.1, hapus versi lama sebelum memasang v1.0.2 karena build lama tidak menyertakan JavaScript bundle dan kunci debug antar-run dapat berbeda. Aplikasi tidak menyimpan sandi atau data login.
 
 Aplikasi ini bukan produk resmi atau afiliasi Google dan tidak menyimpan sandi.
 
 ## Unduh dan build
 
-Unduh APK langsung dari [GitHub Releases](https://github.com/shopppit1-tech/vidsbuka-mobile/releases). Build dari tab GitHub Actions tersedia sebagai artifact ZIP yang perlu diekstrak sebelum memasang APK.
+Unduh APK mandiri langsung dari [GitHub Releases](https://github.com/shopppit1-tech/vidsbuka-mobile/releases). Artifact dari GitHub Actions tersedia sebagai ZIP yang perlu diekstrak sebelum memasang APK.
 
-Push yang mengubah aplikasi pada branch `main` memicu workflow **Build Android APK**. APK debug hanya untuk pengujian; build Play Store bertanda tangan permanen memerlukan signing key/keystore yang aman.
+Push yang mengubah aplikasi pada branch `main` memicu workflow **Build Android APK**. Workflow membangun varian Gradle `release` agar JavaScript bundle disertakan dan memeriksa bundle sebelum mengunggah artifact. APK tersebut masih ditandatangani dengan kunci debug sementara, bukan signing key produksi Play Store.
 
 ## Menjalankan source
 

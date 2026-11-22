@@ -31,7 +31,8 @@ const env = {
   appName: "Vids Buka HP",
   appSlug: "vidsbuka",
   // Public project logo URL for Manus metadata; the native icon is bundled separately below.
-  logoUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519664026901128/NWoKChHemTLiAHcv.png",
+  logoUrl:
+    "https://files.manuscdn.com/user_upload_by_module/session_file/310519664026901128/NWoKChHemTLiAHcv.png",
   scheme: schemeFromBundleId,
   iosBundleId: bundleId,
   androidPackage: bundleId,
@@ -61,7 +62,7 @@ const publicRuntime = {
 const config: ExpoConfig = {
   name: env.appName,
   slug: env.appSlug,
-  version: "1.0.1",
+  version: "1.0.2",
   extra: publicRuntime,
   orientation: "portrait",
   icon: "./assets/images/icon.png",
@@ -70,9 +71,9 @@ const config: ExpoConfig = {
   ios: {
     supportsTablet: true,
     bundleIdentifier: env.iosBundleId,
-    "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
-      }
+    infoPlist: {
+      ITSAppUsesNonExemptEncryption: false,
+    },
   },
   android: {
     adaptiveIcon: {
@@ -83,7 +84,7 @@ const config: ExpoConfig = {
     },
     predictiveBackGestureEnabled: false,
     package: env.androidPackage,
-    versionCode: 2,
+    versionCode: 3,
     intentFilters: [
       {
         action: "VIEW",

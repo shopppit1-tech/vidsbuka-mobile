@@ -30,6 +30,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: pnpm
 
       - name: Activate pnpm
         run: |
@@ -46,6 +47,16 @@ jobs:
         uses: android-actions/setup-android@v4
         with:
           packages: platform-tools
+
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
 
       - name: Install Android platform tools
         run: sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0"

@@ -1,30 +1,26 @@
 # Vids Buka HP
 
-APK Android pendamping untuk membuka Google Vids di browser Chrome atau browser default, dengan pilihan Situs desktop untuk tampilan PC.
+Aplikasi Android ringan untuk membuka Google Vids langsung di Chrome dan memilih tampilan Situs desktop. Aplikasi tidak memuat Google Vids dalam WebView tertanam. Halaman Vids hanya dimuat di Chrome setelah tombol ditekan, sehingga tidak menjadi konten WebView yang terus berjalan di dalam aplikasi.
 
 ## Cara menggunakan
 
 1. Pasang APK dari halaman **Releases** di GitHub.
-2. Tekan **Login Chrome** atau **Buka Google Vids di Chrome**.
-3. Di browser yang terbuka, tekan menu **⋮** lalu aktifkan **Situs desktop** bila ingin tampilan seperti PC.
+2. Tekan **Buka di Chrome**.
+3. Di Chrome, tekan menu **⋮** lalu aktifkan **Situs desktop** agar mencoba tampilan seperti PC.
 
-Login akun Google dilakukan di browser asli, bukan di WebView tertanam, karena Google dapat membatasi login di browser tertanam. Google tetap menentukan akses akun dan fitur yang tersedia.
+Login akun Google dilakukan langsung di Chrome. Google tetap menentukan akses akun dan fitur yang tersedia; Situs desktop tidak menjamin semua fitur Vids berfungsi penuh di HP.
 
-Jika Android menolak pembaruan APK debug karena tanda tangan berbeda, hapus versi debug lama terlebih dahulu lalu pasang APK baru.
+## Kompatibilitas
 
-## Batasan
+APK rilis dioptimalkan untuk Android **ARM64 (64-bit)** agar ukuran unduhan lebih kecil. APK ini tidak cocok untuk perangkat Android 32-bit saja. Jika Android menolak pembaruan APK debug karena tanda tangan berbeda, hapus versi debug lama terlebih dahulu lalu pasang APK baru.
 
-Aplikasi ini bukan produk resmi atau afiliasi Google. Situs desktop tidak menjamin seluruh fitur Google Vids berjalan di HP.
+Aplikasi ini bukan produk resmi atau afiliasi Google dan tidak menyimpan sandi.
 
-## Mengunduh APK
+## Unduh dan build
 
-Unduh APK langsung dari [GitHub Releases](https://github.com/shopppit1-tech/vidsbuka-mobile/releases). Build dari tab GitHub Actions tersedia sebagai artifact ZIP dan perlu diekstrak sebelum memasang file APK.
+Unduh APK langsung dari [GitHub Releases](https://github.com/shopppit1-tech/vidsbuka-mobile/releases). Build dari tab GitHub Actions tersedia sebagai artifact ZIP yang perlu diekstrak sebelum memasang APK.
 
-## Build APK lewat GitHub Actions
-
-Push yang mengubah aplikasi pada branch `main` memicu workflow **Build Android APK**. Workflow menghasilkan APK debug untuk pengujian. Setelah workflow berhasil, buka **Actions → Build Android APK → run terbaru → Artifacts → `vids-buka-hp-debug-apk`**. Artifact disimpan selama 14 hari.
-
-APK debug bukan APK rilis Play Store. Build rilis bertanda tangan permanen memerlukan signing key/keystore yang aman.
+Push yang mengubah aplikasi pada branch `main` memicu workflow **Build Android APK**. APK debug hanya untuk pengujian; build Play Store bertanda tangan permanen memerlukan signing key/keystore yang aman.
 
 ## Menjalankan source
 

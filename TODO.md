@@ -1,7 +1,7 @@
 # TODO
 
-- [x] **Menampilkan Google Vids di dalam APK.** Di Android native, tautan `https://docs.google.com/videos/u/0/mobilecreate?pli=1` dimuat di WebView dengan user-agent desktop; tersedia kontrol login, cek/muat ulang, keluar sesi WebView, dan sembunyikan/tampilkan WebView. Aplikasi tidak menyimpan sandi atau mengklaim status akun terverifikasi.
-- [x] **Menyediakan fallback browser eksternal.** Bila Google membatasi login di WebView, aplikasi memberi tahu pengguna dan menyediakan tombol membuka tautan yang sama di browser HP biasa.
-- [x] **Menjelaskan batasan Google.** Aplikasi menyebut bahwa user-agent desktop tidak menjamin semua fitur Google Vids berjalan di HP dan Google dapat menolak login dari WebView.
-- [x] **Menyimpan source di repo GitHub privat.** Source aplikasi tersimpan sebagai salinan privat di GitHub; repo Manus tetap kanonis untuk proyek mobile.
-- [ ] **Membangun APK debug lewat GitHub Actions.** Workflow harus menghasilkan APK debug yang bisa dipasang dan mengunggahnya sebagai artifact unduhan; tandai selesai hanya setelah workflow berhasil dan artifact tersedia.
+- [x] **Buka Google Vids di Chrome asli.** Pada Android, aplikasi menjalankan intent `ACTION_VIEW` langsung ke Chrome dan memakai browser default sebagai fallback jika Chrome tidak tersedia. Pengguna dapat mengaktifkan Situs desktop dari menu Chrome.
+- [x] **Kurangi pemakaian RAM.** Hapus WebView tertanam dan jangan muat Google Vids sampai pengguna membuka Chrome.
+- [x] **Kurangi ukuran APK.** Hapus dependensi langsung media, gambar, dan notifikasi yang tidak digunakan; bangun target ARM64 saja. Perangkat Android 32-bit saja tidak didukung.
+- [x] **Jaga privasi akun.** Login tetap dilakukan di Chrome. Aplikasi tidak meminta atau menyimpan sandi dan bukan produk resmi Google.
+- [ ] **Buat rilis APK debug v1.0.1.** Selesaikan tes, build Android nyata, verifikasi artifact, lalu lampirkan APK pada GitHub Release.

@@ -5,5 +5,5 @@
 - [x] **Kurangi ukuran APK.** Hapus dependensi langsung media, gambar, dan notifikasi yang tidak digunakan; bangun target ARM64 saja. Perangkat Android 32-bit saja tidak didukung.
 - [x] **Jaga privasi akun.** Login tetap dilakukan di Chrome. Aplikasi tidak meminta atau menyimpan sandi dan bukan produk resmi Google.
 - [x] **Diagnosis v1.0.1.** APK memang paket Android asli tetapi `assembleDebug` tidak menyertakan `assets/index.android.bundle`; karena itu APK tidak mandiri dan gagal memuat aplikasi tanpa Metro.
-- [ ] **Bangun dan rilis APK mandiri v1.0.2.** Gunakan Gradle `assembleRelease`, pastikan APK berisi `assets/index.android.bundle`, ABI hanya ARM64, lalu verifikasi artifact sebelum rilis.
+- [x] **Bangun dan rilis APK mandiri v1.0.2.** Gradle `assembleRelease` menghasilkan APK dengan `assets/index.android.bundle`, ABI hanya ARM64, dan artifact diverifikasi sebelum rilis.
 - [ ] **Uji instalasi di Android fisik.** Belum dilakukan karena sandbox tidak memiliki ADB atau emulator Android.
